@@ -1,0 +1,23 @@
+name: 'sales_analytics'
+version: '1.0.0'
+profile: 'sales_analytics'
+
+model-paths: ["models"]
+snapshot-paths: ["snapshots"]
+test-paths: ["tests"]
+
+models:
+  sales_analytics:
+    staging:
+      +schema: STAGING
+      +materialized: view
+    intermediate:
+      +schema: INTERMEDIATE
+      +materialized: view
+    marts:
+      +schema: MARTS
+      +materialized: table
+
+snapshots:
+  sales_analytics:
+    +target_schema: SNAPSHOTS

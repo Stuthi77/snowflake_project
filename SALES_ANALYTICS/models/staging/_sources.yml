@@ -1,0 +1,26 @@
+version: 2
+
+sources:
+  - name: tpch
+    database: SNOWFLAKE_SAMPLE_DATA
+    schema: TPCH_SF1
+    description: "TPC-H scale-factor-1 sample data, read in place from the Snowflake share."
+    tables:
+      - name: customer
+      - name: orders
+      - name: lineitem
+      - name: part
+      - name: supplier
+      - name: nation
+      - name: region
+
+  - name: raw
+    database: ANALYTICS
+    schema: RAW
+    tables:
+      - name: region_targets
+        description: "Hand-loaded annual sales targets per region."
+        loaded_at_field: loaded_at
+        freshness:
+          warn_after: {count: 30, period: day}
+          error_after: {count: 90, period: day}

@@ -1,0 +1,64 @@
+version: 2
+
+models:
+  - name: fct_order_lines
+    description: "One row per order line. Incremental on order_date, merged on order_line_key."
+    columns:
+      - name: order_line_key
+        description: "Surrogate key: MD5 of order_key and line_number."
+        tests: [unique, not_null]
+      - name: order_key
+        tests:
+          - not_null
+          - relationships:
+              to: ref('fct_orders')
+              field: order_key
+      - name: customer_key
+        tests:
+          - relationships:
+              to: ref('dim_customers')
+              field: customer_key
+      - name: part_key
+        tests:
+          - relationships:
+              to: ref('dim_parts')
+              field: part_key
+      - name: net_revenue
+        description: "extended_price * (1 - discount_pct)."
+        tests: [not_null]
+
+  - name: fct_orders
+    description: "One row per order, with line counts and revenue rolled up."
+    columns:
+      - name: order_key
+        tests: [unique, not_null]
+      - name: order_status
+        tests:
+          - accepted_values:
+              values: ['O', 'F', 'P']
+
+  - name: dim_customers
+    description: "One row per customer, with nation and region attached."
+    columns:
+      - name: customer_key
+        tests: [unique, not_null]
+
+  - name: dim_parts
+    description: "One row per part."
+    columns:
+      - name: part_key
+        tests: [unique, not_null]
+
+  - name: dim_regions
+    description: "One row per region, with its nation count."
+    columns:
+      - name: region_key
+        tests: [unique, not_null]
+      - name: region_name
+        tests: [unique, not_null]
+
+  - name: rpt_region_sales_vs_target
+    description: "One row per region per year, comparing actual net revenue to the loaded target."
+    columns:
+      - name: variance_pct
+        description: "Percent difference between actual revenue and target. Null where no target exists."

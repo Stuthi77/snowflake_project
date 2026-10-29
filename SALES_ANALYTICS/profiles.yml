@@ -1,0 +1,17 @@
+sales_analytics:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      role: DBT_ROLE
+      warehouse: DBT_WH
+      database: ANALYTICS
+      schema: DBT_DEV
+      threads: 8
+    prod:
+      type: snowflake
+      role: DBT_ROLE
+      warehouse: DBT_WH
+      database: ANALYTICS
+      schema: MARTS
+      threads: 8
